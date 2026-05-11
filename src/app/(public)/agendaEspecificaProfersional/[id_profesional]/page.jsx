@@ -71,20 +71,20 @@ export default function CalendarioMensualHoras() {
 
     // Genera los bloques de atención (60 min) según el día de la semana
     // Lunes a Viernes: 09:00 - 19:00
-    // Sábado y domingo: No disponible
+    // Sábado: 09:00 - 13:00
+    // Domingo: No disponible
     // Los inicios van separados por 70 minutos (60 atención + 10 descanso), pero los descansos no se muestran.
     const attentionSlots = useMemo(() => {
         if (!fechaSeleccionada) return [];
 
         const dayOfWeek = fechaSeleccionada.getDay(); // 0=domingo, 6=sábado
 
-        // Sábado y domingo no tienen horarios
-        if (dayOfWeek === 0 || dayOfWeek === 6) return [];
+        // Domingo no tiene horarios
+        if (dayOfWeek === 0) return [];
 
         const slots = [];
         const startMinutes = 9 * 60; // 09:00
-        // Lunes a Viernes hasta 19:00
-        const endMinutes = 19 * 60;
+        const endMinutes = dayOfWeek === 6 ? 13 * 60 : 19 * 60;
         let cursor = startMinutes;
 
         const minutesToHHMM = (min) => {
@@ -129,10 +129,10 @@ export default function CalendarioMensualHoras() {
             return;
         }
 
-        // Validar que no sea sábado ni domingo
+        // Validar que no sea domingo
         const dayOfWeek = fecha.getDay();
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
-            toast.error("Las atenciones son de lunes a viernes de 09:00 a 19:00 horas.", {
+        if (dayOfWeek === 0) {
+            toast.error("Las atenciones son de lunes a viernes de 09:00 a 19:00 horas y sábado de 09:00 a 13:00.", {
                 duration: 4000,
                 style: {
                     background: '#FEE2E2',
@@ -491,7 +491,7 @@ export default function CalendarioMensualHoras() {
                         <div className="mt-5">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-sm font-semibold text-slate-800">
-                                    Agenda (lunes a viernes de 09:00 a 19:00 horas)
+                                    Agenda (lunes a viernes de 09:00 a 19:00 horas, sábado de 09:00 a 13:00)
                                 </h3>
                                 <div className="flex items-center gap-3">
                                     <p className="text-xs text-slate-500">Bloques de 60 min</p>
@@ -603,7 +603,7 @@ export default function CalendarioMensualHoras() {
                         Atención clínica con un servicio personalizado para cada paciente.
                     </p>
                     <p className="mt-2 text-[11px] text-slate-400">
-                        Horarios: lunes a viernes de 09:00 a 19:00 horas
+                        Horarios: lunes a viernes de 09:00 a 19:00 horas, sábado de 09:00 a 13:00
                     </p>
                 </footer>
             </div>
