@@ -146,7 +146,7 @@ export default function DashboardLayout({ children }) {
                             </details>
 
 
-
+                            {/*
 
                             <details className="group">
                                 <summary className="flex items-center justify-between px-2 py-1.5 text-[9px] font-medium text-white/35 hover:text-white/55 transition-colors duration-200 cursor-pointer list-none select-none tracking-[0.08em] uppercase">
@@ -163,7 +163,7 @@ export default function DashboardLayout({ children }) {
                                 <div className="mt-1 ml-1 space-y-0.5 border-l border-white/[0.06] pl-3">
 
 
-                                    {/*
+
                                                                         <Link
                                         href="/dashboard/presupuestoTratamiento"
                                         className="group/link flex items-center gap-2.5 rounded-md px-2 py-[6px] text-[12.5px] font-light text-white/50 hover:text-white/90 hover:bg-white/[0.05] transition-all duration-200"
@@ -190,7 +190,7 @@ export default function DashboardLayout({ children }) {
                                         Receta Lentes
                                     </Link>
 
-                                    */}
+
 
 
 
@@ -207,7 +207,7 @@ export default function DashboardLayout({ children }) {
                                 </div>
                             </details>
 
-
+        */}
 
                             {/* — Gestión de Contenido — */}
                             <details className="group">
