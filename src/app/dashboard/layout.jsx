@@ -267,7 +267,13 @@ export default function DashboardLayout({ children }) {
 
 
 
-
+                                    <Link
+                                        href="/dashboard/ingresoProductos"
+                                        className="group/link flex items-center gap-2.5 rounded-md px-2 py-[6px] text-[12.5px] font-light text-white/50 hover:text-white/90 hover:bg-white/[0.05] transition-all duration-200"
+                                    >
+                                        <span className="h-[3px] w-[3px] rounded-full bg-white/15 group-hover/link:bg-violet-400 group-hover/link:shadow-[0_0_6px_rgba(139,92,246,0.6)] transition-all duration-200" />
+                                        Tratamientos y Servicios
+                                    </Link>
 
 
                                  — */}
@@ -280,13 +286,7 @@ export default function DashboardLayout({ children }) {
                                         Registro de Agendas
                                     </Link>
 
-                                    <Link
-                                        href="/dashboard/ingresoProductos"
-                                        className="group/link flex items-center gap-2.5 rounded-md px-2 py-[6px] text-[12.5px] font-light text-white/50 hover:text-white/90 hover:bg-white/[0.05] transition-all duration-200"
-                                    >
-                                        <span className="h-[3px] w-[3px] rounded-full bg-white/15 group-hover/link:bg-violet-400 group-hover/link:shadow-[0_0_6px_rgba(139,92,246,0.6)] transition-all duration-200" />
-                                        Tratamientos y Servicios
-                                    </Link>
+
 
                                     <Link
                                         href="/dashboard/serviciosAgendamiento"
@@ -373,8 +373,8 @@ export default function DashboardLayout({ children }) {
                         <div className="rounded-xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] ring-1 ring-white/[0.07] px-3.5 py-3">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <div className="text-[9.5px] font-semibold text-white/25 tracking-[0.1em] uppercase">Sistema</div>
-                                    <div className="mt-0.5 text-[12px] font-medium text-white/65">Operativo</div>
+                                    <div className="text-[9.5px] font-semibold text-white/25 tracking-[0.1em] uppercase">Sistema Operativo</div>
+                                    <div className="mt-0.5 text-[12px] font-medium text-white/65">1.0.2</div>
                                 </div>
                                 <div className="relative flex items-center gap-1.5">
                                     <span className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-emerald-400/10 animate-ping" />
