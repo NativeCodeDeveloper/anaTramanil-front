@@ -7,6 +7,19 @@ import {toast} from "react-hot-toast";
 import * as React from "react";
 import {useParams, useRouter} from "next/navigation";
 
+const WEEKLY_ATTENTION_SLOTS = [
+    {start: "09:00", end: "09:50"},
+    {start: "10:00", end: "10:50"},
+    {start: "11:00", end: "11:50"},
+    {start: "12:00", end: "12:50"},
+    {start: "13:00", end: "13:50"},
+    {start: "15:00", end: "15:50"},
+    {start: "16:00", end: "16:50"},
+    {start: "17:00", end: "17:50"},
+    {start: "18:00", end: "18:50"},
+    {start: "19:00", end: "19:50"},
+];
+
 function formatDateToYMD(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -69,52 +82,19 @@ export default function CalendarioMensualHoras() {
         return dias;
     };
 
-    // Genera los bloques de atención (60 min) según el día de la semana
-    // Lunes a Viernes: 09:00 - 19:00
-    // Sábado: 09:00 - 13:00
-    // Domingo: No disponible
-    // Los inicios van separados por 70 minutos (60 atención + 10 descanso), pero los descansos no se muestran.
+    // Horarios fijos de atención para todos los días.
     const attentionSlots = useMemo(() => {
         if (!fechaSeleccionada) return [];
-
-        const dayOfWeek = fechaSeleccionada.getDay(); // 0=domingo, 6=sábado
-
-        // Domingo no tiene horarios
-        if (dayOfWeek === 0) return [];
-
-        const slots = [];
-        const startMinutes = 9 * 60; // 09:00
-        const endMinutes = dayOfWeek === 6 ? 13 * 60 : 19 * 60;
-        let cursor = startMinutes;
-
-        const minutesToHHMM = (min) => {
-            const hh = Math.floor(min / 60);
-            const mm = min % 60;
-            return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
-        };
-
-        while (cursor + 60 <= endMinutes) {
-            const attStart = cursor;
-            const attEnd = cursor + 60;
-            slots.push({start: minutesToHHMM(attStart), end: minutesToHHMM(attEnd)});
-            // avanzar 60 + 10 minutos (=70) para el siguiente inicio
-            cursor = attEnd + 10;
-        }
-
-        return slots;
+        return WEEKLY_ATTENTION_SLOTS;
     }, [fechaSeleccionada]);
-
-    const addMinutesToHHMM = (hhmm, minutesToAdd) => {
-        const [hh, mm] = hhmm.split(":").map(Number);
-        const total = hh * 60 + mm + minutesToAdd;
-        const newH = Math.floor(total / 60);
-        const newM = total % 60;
-        return `${String(newH).padStart(2, "0")}:${String(newM).padStart(2, "0")}`;
-    };
 
     const hhmmToMinutes = (hhmm) => {
         const [hh, mm] = hhmm.split(":").map(Number);
         return (hh * 60) + mm;
+    };
+
+    const getSlotEndByStart = (start) => {
+        return WEEKLY_ATTENTION_SLOTS.find((slot) => slot.start === start)?.end || "";
     };
 
     /* ---------- handlers ---------- */
@@ -129,27 +109,13 @@ export default function CalendarioMensualHoras() {
             return;
         }
 
-        // Validar que no sea domingo
-        const dayOfWeek = fecha.getDay();
-        if (dayOfWeek === 0) {
-            toast.error("Las atenciones son de lunes a viernes de 09:00 a 19:00 horas y sábado de 09:00 a 13:00.", {
-                duration: 4000,
-                style: {
-                    background: '#FEE2E2',
-                    color: '#991B1B',
-                    border: '1px solid #FCA5A5',
-                }
-            });
-            return;
-        }
-
         setFechaSeleccionada(fecha);
 
         const fechaYMD = formatDateToYMD(fecha);
 
         // Si ya hay hora seleccionada, mantenla y recalcula las cadenas en el contexto
         if (horaInicio) {
-            const horaFinAuto = addMinutesToHHMM(horaInicio, 60);
+            const horaFinAuto = getSlotEndByStart(horaInicio);
             setHoraFin(horaFinAuto);
             setFechaInicio(fechaYMD);
             setFechaFinalizacion(fechaYMD);
@@ -184,7 +150,7 @@ export default function CalendarioMensualHoras() {
             }
         }
 
-        const horaFinAuto = addMinutesToHHMM(hora, 60);
+        const horaFinAuto = getSlotEndByStart(hora);
 
         setHoraInicio(hora);
         setHoraFin(horaFinAuto);
@@ -455,8 +421,7 @@ export default function CalendarioMensualHoras() {
                                 const day = new Date(dia);
                                 day.setHours(0, 0, 0, 0);
                                 const isPastDay = day < today;
-                                const isSunday = dia.getDay() === 0;
-                                const isDisabled = isPastDay || isSunday;
+                                const isDisabled = isPastDay;
                                 const isSelected = fechaSeleccionada?.toDateString() === dia.toDateString();
 
                                 return (
@@ -471,7 +436,7 @@ export default function CalendarioMensualHoras() {
                                         className={
                                             "h-10 flex items-center justify-center rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1 " +
                                             (isDisabled
-                                                ? "cursor-not-allowed border border-slate-200/70 bg-white/60 text-slate-400 shadow-sm" + (isSunday ? " opacity-50" : "")
+                                                ? "cursor-not-allowed border border-slate-200/70 bg-white/60 text-slate-400 shadow-sm"
                                                 : isSelected
                                                     ? "border border-gray-900 bg-gray-900 text-white shadow-md shadow-gray-900/10"
                                                     : "border border-slate-200 bg-white/90 text-slate-700 shadow-sm hover:bg-white hover:border-gray-400 hover:shadow-md hover:shadow-slate-900/5")
@@ -491,10 +456,10 @@ export default function CalendarioMensualHoras() {
                         <div className="mt-5">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-sm font-semibold text-slate-800">
-                                    Agenda (lunes a viernes de 09:00 a 19:00 horas, sábado de 09:00 a 13:00)
+                                    Agenda disponible de lunes a domingo
                                 </h3>
                                 <div className="flex items-center gap-3">
-                                    <p className="text-xs text-slate-500">Bloques de 60 min</p>
+                                    <p className="text-xs text-slate-500">Bloques de 50 min</p>
                                     {checkingBlocked && (
                                         <div className="flex items-center gap-2 text-xs text-slate-500">
                                             <svg className="w-3 h-3 animate-spin text-slate-500"
@@ -603,7 +568,7 @@ export default function CalendarioMensualHoras() {
                         Atención clínica con un servicio personalizado para cada paciente.
                     </p>
                     <p className="mt-2 text-[11px] text-slate-400">
-                        Horarios: lunes a viernes de 09:00 a 19:00 horas, sábado de 09:00 a 13:00
+                        Horarios: lunes a domingo de 09:00 a 09:50, 10:00 a 10:50, 11:00 a 11:50, 12:00 a 12:50, 13:00 a 13:50, 15:00 a 15:50, 16:00 a 16:50, 17:00 a 17:50, 18:00 a 18:50 y 19:00 a 19:50
                     </p>
                 </footer>
             </div>
